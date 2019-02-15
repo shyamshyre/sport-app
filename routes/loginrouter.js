@@ -5,7 +5,8 @@ const router = express.Router();
 
 var logincontroller = require('../controller/logincontroller')
 
-router.get('/', logincontroller.login);
+/* Public Routes*/
+
 router.get('/register', logincontroller.register);
 router.get('/forgotpasword', logincontroller.forgotpassword);
 

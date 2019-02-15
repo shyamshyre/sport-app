@@ -1,28 +1,37 @@
-const expressJwt = require('express-jwt');
-const config = require('../config/components')
+var jwt    = require('jsonwebtoken');
+const config = require('../config/components/config.json');
 
-module.exports = jwt;
+module.exports = validateToken;
 
-function jwt() {
-    const secret = config.jwtconfig.SECRET;
-    console.log(secret);
-    return expressJwt({ secret, isRevoked }).unless({
-        path: [
-            // public routes that don't require authentication
-            '/login',
-            '/login/register'
-        ]
-    });
+function validateToken(req,res,next){
+
+	console.log("inside middle ware");
+	// check header or url parameters or post parameters for token
+	var token = req.body.token || req.params('token') || req.headers['x-access-token'];
+
+	// decode token
+	if (token) {
+
+		// verifies secret and checks exp
+		jwt.verify(token, app.get('superSecret'), function(err, decoded) {			
+			if (err) {
+				return res.json({ success: false, message: 'Failed to authenticate token.' });		
+			} else {
+				// if everything is good, save to request for use in other routes
+				req.decoded = decoded;	
+				next();
+			}
+		});
+
+	} else {
+
+		// if there is no token
+		// return an error
+		return res.status(403).send({ 
+			success: false, 
+			message: 'No token provided.'
+		});
+		
+	}
+	
 }
-
-async function isRevoked(req, payload, done) {
-    console.log("Inside the Revoke Function");
-    const user = await userService.getById(payload.sub);
-
-    // revoke token if user no longer exists
-    if (!user) {
-        return done(null, true);
-    }
-
-    done();
-};

@@ -1,5 +1,4 @@
-'use strict'
-
+require('rootpath')();
 const express = require('express');
 const app = express();
 const middleware = require('../middleware');
@@ -10,6 +9,7 @@ const bodyParser = require('body-parser');
 const config = require('../config/components')
 var loginRouter = require('../routes/loginrouter');
 var userRouter = require('../routes/userrouter');
+var errorHandler = require('../handlers/error-handler')
 
 /**
  * 
@@ -25,7 +25,7 @@ function StartDatabase(){
   mongoose.connect(config.devconfig.MONGODB_CONNSTRING,function(err,db){
   if (err) throw new Error('Error in creating the Database');
   console.log('Database Created');
-  db.close();
+  //db.close();
 });
 
   mongoose.Promise = global.Promise;
@@ -37,27 +37,15 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.use(middleware.logger.myLogger);
-//app.use(middleware.jwt);
-app.use('/login',loginRouter);
+
+
 app.use('/users',userRouter);
+app.use('/login',loginRouter);
 
-// Catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
 
-// // Error handler
-// app.use(function(err, req, res, next) {
-//   // Set locals, only providing error in development
-//   console.log(err.message);
-//   // res.locals.message = err.message;
-//   // res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-//   // // Render the error page
-//   // res.status(err.status || 500);
-//   // res.render('error');
-// });
+app.use(errorHandler);
+
+
 
 module.exports ={StartServer,app}

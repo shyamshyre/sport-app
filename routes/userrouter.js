@@ -1,12 +1,13 @@
 'use strict'
 const express = require('express');
 const router = express.Router();
-
-
 var usercontroller = require('../controller/usercontroller')
+const middleware = require('../middleware/jwt');
 
-router.get('/register', usercontroller.register);
-router.get('/forgotpasword', usercontroller.forgotpassword);
+
+router.use(middleware);
+router.post('/authenticate', usercontroller.authenticate);
+router.post('/getUsers', usercontroller.getUsers);
 
 
 module.exports =router;
