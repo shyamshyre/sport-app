@@ -1,6 +1,8 @@
 'use strict'
 const bcrypt = require('bcrypt');
-const User = require('../model/user')
+const User = require('../model/user');
+const jwt = require('jsonwebtoken');
+const config = require('../config');
 /**
  * 
  */
@@ -13,17 +15,26 @@ exports.register = function(req,res){
     var password = req.body.password;
     var bcryptpassword = bcrypt.hashSync(password,10);
     
+    var signOptions = {
+        issuer:  "ICONMA",
+        subject:  "token",
+        audience:  "Client Identity",
+        expiresIn:  "12h",
+        algorithm:  "RS256"
+       };
+
     var userobj = new User({username:username,password:bcryptpassword,admin:true});
     console.log({userobj});
-    userobj.save(function(err) {
+        userobj.save(function(err) {
         if (err) throw err;
-    
         console.log('User saved successfully');
-        //res.json({ success: true });
+        const token = jwt.sign({username}, "secret");
+        console.log("Token",token);
+
+        res.json({ success: token });
       });
     
       console.log("Inside Login - Service - Register Method");
-    res.send('Inside Login - Service - Register Method');
 }
 exports.forgotpassword = function(req,res){
     console.log("Inside Login - Service - ForgotPassword Method");

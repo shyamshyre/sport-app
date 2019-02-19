@@ -7,7 +7,7 @@ var logincontroller = require('../controller/logincontroller')
 
 /* Public Routes*/
 
-router.get('/register', logincontroller.register);
+router.post('/register', logincontroller.register);
 router.get('/forgotpasword', logincontroller.forgotpassword);
 
 

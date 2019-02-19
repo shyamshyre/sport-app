@@ -7,7 +7,7 @@ const middleware = require('../middleware/jwt');
 
 router.use(middleware);
 router.post('/authenticate', usercontroller.authenticate);
-router.post('/getUsers', usercontroller.getUsers);
+router.get('/getUsers', usercontroller.getUsers);
 
 
 module.exports =router;

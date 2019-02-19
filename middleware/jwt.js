@@ -1,19 +1,16 @@
 var jwt    = require('jsonwebtoken');
-const config = require('../config/components/config.json');
+//const config = require('../config/components/config.json');
 
 module.exports = validateToken;
 
 function validateToken(req,res,next){
 
-	console.log("inside middle ware");
 	// check header or url parameters or post parameters for token
-	var token = req.body.token || req.params('token') || req.headers['x-access-token'];
-
+	var token = req.body.token || req.param('token') || req.headers['x-access-token'];
+	console.log('Token ',token);
 	// decode token
 	if (token) {
-
-		// verifies secret and checks exp
-		jwt.verify(token, app.get('superSecret'), function(err, decoded) {			
+		jwt.verify(token, "secret", function(err, decoded) {			
 			if (err) {
 				return res.json({ success: false, message: 'Failed to authenticate token.' });		
 			} else {
@@ -33,5 +30,4 @@ function validateToken(req,res,next){
 		});
 		
 	}
-	
 }
